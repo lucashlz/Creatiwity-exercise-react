@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Page } from './types';
 import './App.css';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 const seed: Page[] = [
   {
@@ -18,7 +19,8 @@ const seed: Page[] = [
 ];
 
 function App() {
-  const [pages] = useState<Page[]>(seed);
+  const STORAGE_KEY = 'book-pages-v1';
+  const [pages, setPages] = useLocalStorage<Page[]>(STORAGE_KEY, seed);
   const [index, setIndex] = useState(0);
 
   const current = pages[index];
@@ -28,8 +30,12 @@ function App() {
     <div style={{ maxWidth: 720, margin: '2rem auto', padding: '0 1rem' }}>
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <h1>My Book</h1>
-        <div>{index + 1} / {total}</div>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div>{index + 1} / {total}</div>
+          <button onClick={() => setPages(seed)}>Reset</button>
+        </div>
       </header>
+
 
       <main style={{ minHeight: 320, padding: '1rem 0' }}>
         {current?.type === 'text' ? (
