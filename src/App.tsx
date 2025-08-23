@@ -1,35 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import type { Page } from './types';
+import './App.css';
+
+const seed: Page[] = [
+  {
+    id: crypto.randomUUID(),
+    type: 'text',
+    content: 'Welcome to the dynamic book. Use Next/Previous buttons to navigate.',
+    createdAt: Date.now(),
+  },
+  {
+    id: crypto.randomUUID(),
+    type: 'image',
+    content: 'https://avatars.githubusercontent.com/u/85584595?v=4',
+    createdAt: Date.now(),
+  },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [pages] = useState<Page[]>(seed);
+  const [index, setIndex] = useState(0);
+
+  const current = pages[index];
+  const total = pages.length;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div style={{ maxWidth: 720, margin: '2rem auto', padding: '0 1rem' }}>
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <h1>My Book</h1>
+        <div>{index + 1} / {total}</div>
+      </header>
+
+      <main style={{ minHeight: 320, padding: '1rem 0' }}>
+        {current?.type === 'text' ? (
+          <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{current.content}</p>
+        ) : current?.type === 'image' ? (
+          <img src={current.content} style={{ maxWidth: '100%', borderRadius: 8 }} />
+        ) : (
+          <p>No pages.</p>
+        )}
+      </main>
+
+      <nav style={{ display: 'flex', gap: 8, justifyContent: 'space-between' }}>
+        <button
+          onClick={() => setIndex(i => Math.max(0, i - 1))}
+          disabled={index === 0}
+        >
+          ← Previous
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+        <button
+          onClick={() => setIndex(i => Math.min(total - 1, i + 1))}
+          disabled={index >= total - 1}
+        >
+          Next →
+        </button>
+      </nav>
+    </div>
+  );
 }
 
-export default App
+export default App;
