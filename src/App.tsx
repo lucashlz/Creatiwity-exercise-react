@@ -2,66 +2,98 @@ import { useState } from 'react';
 import type { Page } from './types';
 import './App.css';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import AddPageModal from './components/AddPageModal';
 
 const seed: Page[] = [
   {
     id: crypto.randomUUID(),
     type: 'text',
-    content: 'Welcome to the dynamic book. Use Next/Previous buttons to navigate.',
+    content: 'Welcome to the creatiwity book. Use the Next/Previous buttons to navigate.',
     createdAt: Date.now(),
-  },
-  {
-    id: crypto.randomUUID(),
-    type: 'image',
-    content: 'https://avatars.githubusercontent.com/u/85584595?v=4',
-    createdAt: Date.now(),
-  },
+  }
 ];
 
+const STORAGE_KEY = 'book-pages';
+
 function App() {
-  const STORAGE_KEY = 'book-pages-v1';
   const [pages, setPages] = useLocalStorage<Page[]>(STORAGE_KEY, seed);
+
   const [index, setIndex] = useState(0);
+  const [addOpen, setAddOpen] = useState(false);
 
   const current = pages[index];
   const total = pages.length;
 
+  function handleAdd(data: { type: Page['type']; content: string }) {
+    const newPage: Page = {
+      id: crypto.randomUUID(),
+      type: data.type,
+      content: data.content,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    const next = [...pages, newPage];
+    setPages(next);
+    setIndex(next.length - 1);
+  }
+
+  function handleReset() {
+    setPages(seed);
+    setIndex(0);
+  }
+
   return (
-    <div style={{ maxWidth: 720, margin: '2rem auto', padding: '0 1rem' }}>
-      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <h1>My Book</h1>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <div>{index + 1} / {total}</div>
-          <button onClick={() => setPages(seed)}>Reset</button>
-        </div>
-      </header>
+    <>
+      <img src="/creatiwity-logo.svg" alt="Creatiwity Logo" className="creatiwity-logo-fixed" />
+      
+      <div className="container">
+        <header className="header-row">
+          <h1>The Creatiwity Book</h1>
+          <div className="counter">
+            <div>{Math.min(index + 1, Math.max(total, 1))} / {total || 1}</div>
+            <button className="btn" onClick={handleReset} title="Reset to demo pages">Reset</button>
+          </div>
+        </header>
 
-
-      <main style={{ minHeight: 320, padding: '1rem 0' }}>
+      <main className="card">
         {current?.type === 'text' ? (
-          <p style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{current.content}</p>
+          <p className="content-text">{current.content}</p>
         ) : current?.type === 'image' ? (
-          <img src={current.content} style={{ maxWidth: '100%', borderRadius: 8 }} />
+          <img src={current.content} className="content-image" alt="Page content" />
         ) : (
-          <p>No pages.</p>
+          <p className="no-content">No pages.</p>
         )}
       </main>
 
-      <nav style={{ display: 'flex', gap: 8, justifyContent: 'space-between' }}>
-        <button
-          onClick={() => setIndex(i => Math.max(0, i - 1))}
-          disabled={index === 0}
-        >
+      <nav className="nav-row">
+        <button className="btn" onClick={() => setIndex(i => Math.max(0, i - 1))} disabled={index === 0}>
           ← Previous
         </button>
-        <button
-          onClick={() => setIndex(i => Math.min(total - 1, i + 1))}
-          disabled={index >= total - 1}
-        >
+  
+        <button className="btn" onClick={() => setIndex(i => Math.min(total - 1, i + 1))} disabled={index >= total - 1}>
           Next →
-        </button>
+          </button>
       </nav>
-    </div>
+
+      <button
+        className="fab"
+        onClick={() => setAddOpen(true)}
+        aria-label="Add page"
+        title="Add page"
+      >
+        <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      </button>
+
+
+      <AddPageModal
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onSubmit={handleAdd}
+      />
+      </div>
+    </>
   );
 }
 
