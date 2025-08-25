@@ -1,69 +1,47 @@
-# React + TypeScript + Vite
+# The Creatiwity Book - React Exercise
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React application that allows users to create and navigate through a dynamic book with text and image pages.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dynamic Pages**: Create pages with text content or image URLs
+- **Navigation**: Browse through pages with Previous/Next buttons
+- **Page Editing**: Edit existing pages with a simple modal interface
+- **Data Persistence**: All pages are saved to localStorage
+- **Responsive Design**: Works seamlessly on desktop and mobile
+- **Character Limits**: Text pages limited to 1000 characters with live counter
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** with TypeScript
+- **Vite** for build tooling
+- **CSS** with modern features (flexbox, grid, custom properties)
+- **ESLint** for code quality
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+```bash
+# Install dependencies
+npm install
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🎯 Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Navigate**: Use Previous/Next buttons to browse pages
+2. **Add Pages**: Click the floating + button to add new pages
+3. **Edit Pages**: Click the "✏️ Edit" button on any page to modify it
+4. **Reset**: Click "Reset" to restore the welcome page
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🏆 Key Features
+
+- **Custom Hook**: `useLocalStorage` for automatic data persistence
+- **TypeScript**: Full type safety with interfaces and generics
+- **Responsive**: Mobile-first design with breakpoints at 640px and 1024px
+- **Accessibility**: Proper ARIA labels and semantic HTML
+- **Modern CSS**: CSS variables, flexbox layouts, and smooth transitions

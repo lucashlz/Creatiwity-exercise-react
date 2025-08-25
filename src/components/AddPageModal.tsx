@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { PageType } from '../types';
+import type { PageType, Page } from '../types';
 
 type FormData = { type: PageType; content: string };
 
@@ -7,22 +7,30 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: FormData) => void;
+  editPage?: Page | null;
 }
 
 const MAX_TEXT_LENGTH = 1000;
 
-export default function AddPageModal({ open, onClose, onSubmit }: Props) {
+export default function AddPageModal({ open, onClose, onSubmit, editPage }: Props) {
   const [type, setType] = useState<PageType>('text');
   const [content, setContent] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  const isEditing = Boolean(editPage);
+
   useEffect(() => {
     if (open) {
-      setType('text');
-      setContent('');
+      if (editPage) {
+        setType(editPage.type);
+        setContent(editPage.content);
+      } else {
+        setType('text');
+        setContent('');
+      }
       setError(null);
     }
-  }, [open]);
+  }, [open, editPage]);
 
   function validate(): boolean {
     if (!content.trim()) {
@@ -59,7 +67,7 @@ export default function AddPageModal({ open, onClose, onSubmit }: Props) {
     <div className="modal" role="dialog" aria-modal="true" aria-label="Add a new page">
       <div className="modal__backdrop" onClick={onClose} />
       <div className="modal__panel">
-        <h2 className="modal__title">Add a new page</h2>
+        <h2 className="modal__title">{isEditing ? 'Edit page' : 'Add a new page'}</h2>
 
         <form onSubmit={handleSubmit} className="modal__grid">
           <div className="modal__row">
@@ -116,7 +124,7 @@ export default function AddPageModal({ open, onClose, onSubmit }: Props) {
 
           <div className="modal__actions">
             <button type="button" className="btn" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary">Add page</button>
+            <button type="submit" className="btn btn-primary">{isEditing ? 'Update page' : 'Add page'}</button>
           </div>
         </form>
       </div>

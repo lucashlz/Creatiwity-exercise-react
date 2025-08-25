@@ -20,21 +20,44 @@ function App() {
 
   const [index, setIndex] = useState(0);
   const [addOpen, setAddOpen] = useState(false);
+  const [editingPage, setEditingPage] = useState<Page | null>(null);
 
   const current = pages[index];
   const total = pages.length;
 
-  function handleAdd(data: { type: Page['type']; content: string }) {
-    const newPage: Page = {
-      id: crypto.randomUUID(),
-      type: data.type,
-      content: data.content,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    const next = [...pages, newPage];
-    setPages(next);
-    setIndex(next.length - 1);
+  function handleSubmit(data: { type: Page['type']; content: string }) {
+    if (editingPage) {
+      const updatedPages = pages.map(page =>
+        page.id === editingPage.id
+          ? { ...page, type: data.type, content: data.content, updatedAt: Date.now() }
+          : page
+      );
+      setPages(updatedPages);
+      setEditingPage(null);
+    } else {
+      const newPage: Page = {
+        id: crypto.randomUUID(),
+        type: data.type,
+        content: data.content,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+      const next = [...pages, newPage];
+      setPages(next);
+      setIndex(next.length - 1);
+    }
+  }
+
+  function handleEdit() {
+    if (current) {
+      setEditingPage(current);
+      setAddOpen(true);
+    }
+  }
+
+  function handleCloseModal() {
+    setAddOpen(false);
+    setEditingPage(null);
   }
 
   function handleReset() {
@@ -63,6 +86,16 @@ function App() {
         ) : (
           <p className="no-content">No pages.</p>
         )}
+        
+        {current && (
+          <button 
+            className="btn edit-btn" 
+            onClick={handleEdit}
+            title="Edit this page"
+          >
+            ✏️ Edit
+          </button>
+        )}
       </main>
 
       <nav className="nav-row">
@@ -89,8 +122,9 @@ function App() {
 
       <AddPageModal
         open={addOpen}
-        onClose={() => setAddOpen(false)}
-        onSubmit={handleAdd}
+        onClose={handleCloseModal}
+        onSubmit={handleSubmit}
+        editPage={editingPage}
       />
       </div>
     </>
